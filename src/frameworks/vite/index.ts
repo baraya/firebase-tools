@@ -85,6 +85,8 @@ export async function getDevModeHandle(dir: string) {
       process.stdout.write(data);
       const match = data.toString().match(/(http:\/\/.+:\d+)/);
       if (match) resolve(match[1]);
+      // match is failing to parse the ip
+      resolve("http://127.0.0.1:5173");
     });
     serve.stderr.on("data", (data: any) => {
       process.stderr.write(data);
