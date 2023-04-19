@@ -6,6 +6,7 @@ import { join } from "path";
 import { findDependency, FrameworkType, getNodeModuleBin, relativeRequire, SupportLevel } from "..";
 import { promptOnce } from "../../prompt";
 import { simpleProxy, warnIfCustomBuildScript } from "../utils";
+const stripAnsi = require("strip-ansi");
 
 export const name = "Vite";
 export const support = SupportLevel.Experimental;
@@ -83,10 +84,9 @@ export async function getDevModeHandle(dir: string) {
     const serve = spawn(cli, [], { cwd: dir });
     serve.stdout.on("data", (data: any) => {
       process.stdout.write(data);
-      const match = data.toString().match(/(http:\/\/.+:\d+)/);
+      const dataWithoutANSIColor = stripAnsi(data.toString());
+      const match = dataWithoutANSIColor.match(/(http:\/\/.+:\d+)/);
       if (match) resolve(match[1]);
-      // match is failing to parse the ip
-      resolve("http://127.0.0.1:5173");
     });
     serve.stderr.on("data", (data: any) => {
       process.stderr.write(data);
